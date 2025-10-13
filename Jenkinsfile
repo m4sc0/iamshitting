@@ -4,7 +4,7 @@ pipeline {
   triggers { githubPush() }
   environment {
     IMAGE = 'iamshitting/frontend:dev'
-    CONTAINER = 'iamshit-frontend-dev'
+    CONTAINER = 'iamshitting-frontend-dev'
   }
   stages {
     stage('Checkout'){ steps { checkout scm } }
@@ -15,7 +15,7 @@ pipeline {
       steps {
         sh '''
           docker rm -f $CONTAINER || true
-          docker run -d --name $CONTAINER --restart unless-stopped $IMAGE
+          docker run -d --name $CONTAINER --restart unless-stopped --network proxy $IMAGE
         '''
       }
     }
