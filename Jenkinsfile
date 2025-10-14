@@ -11,7 +11,9 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    env.GIT_MSG = sh(script: 'git log -1 --pretty=%s', returnStdout: true).trim()
+                    env.GIT_SHA     = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    env.GIT_MSG     = sh(script: 'git log -1 --pretty=%s', returnStdout: true).trim()
+                    env.GIT_AUTHOR  = sh(script: 'git log -1 --pretty=%an', returnStdout: true).trim()
                 }
             }
         }
@@ -35,7 +37,7 @@ pipeline {
                     def now = new Date().format("yyyy-MM-dd HH:mm:ss 'UTC'", TimeZone.getTimeZone('UTC'))
                     def title = "${env.JOB_NAME} #${env.BUILD_NUMBER}"
                     def desc = """**Result:** ${currentBuild.currentResult}
-            **Changes:** ${env.GIT_COMMIT} | ${env.GIT_MSG}
+            **Changes:** ${env.GIT_SHA} | ${env.GIT_MSG}
             **Author:** ${env.GIT_AUTHOR}
             **Branch:** ${env.GIT_BRANCH}
             """
