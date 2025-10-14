@@ -21,6 +21,28 @@ pipeline {
     }
   }
   post {
-    always { sh 'docker ps --filter "name=$CONTAINER" || true' }
+    always {
+      sh 'docker ps --filter "name=$CONTAINER" || true'
+      script {
+        if (env.DISCORD_WEBHOOK?.trim()) {
+          def title = "${env.JOB_NAME} #${env.BUILD_NUMBER}"
+          def desc = """**Result:** ${currentBuild.currentResult}
+**Branch:** ${env.GIT_BRANCH}
+**Commit:** ${env.GIT_SHA}
+**Author:** ${env.GIT_AUTHOR}
+**Message:** ${env.GIT_MSG}"""
+          discordSend(
+            description: desc,
+            footer: "Docker: ${env.IMAGE} → ${env.CONTAINER}",
+            link: env.BUILD_URL,
+            result: currentBuild.currentResult,
+            title: title,
+            webhookURL: env.DISCORD_WEBHOOK
+          )
+        } else {
+          echo 'DISCORD_WEBHOOK not set. Skipping Discord notification.'
+        }
+      }
+    }
   }
 }
