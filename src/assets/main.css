@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: #f9fafb;
+  @apply bg-neutral-800 text-zinc-400;
 }
