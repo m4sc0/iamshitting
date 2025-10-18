@@ -23,9 +23,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-          docker rm -f $CONTAINER || true
-          docker run -d --name $CONTAINER --restart unless-stopped --network proxy $IMAGE
-        '''
+                    docker rm -f $CONTAINER || true
+                    docker run -d \
+                        --name $CONTAINER \
+                        --restart unless-stopped \
+                        --network proxy \
+                        -e NODE_ENV=development \
+                        -e DEVELOPMENT=true \
+                        $IMAGE
+                '''
             }
         }
     }
